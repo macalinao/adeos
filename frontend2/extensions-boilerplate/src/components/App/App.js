@@ -3,6 +3,7 @@ import Authentication from "../../util/Authentication/Authentication";
 import Ad from "./Ad";
 import Poll from "./Poll";
 import AdPopup from "./AdPopup";
+import AdBid from "./AdBid";
 
 // eos
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from "eosjs";
@@ -22,7 +23,7 @@ const Wrap = styled.div`
   padding: 20px;
 `;
 
-const pushThing = async () => {
+const pushThing = async imageUrl => {
   const result = await api.transact(
     {
       actions: [
@@ -37,8 +38,7 @@ const pushThing = async () => {
           ],
           data: {
             space: "sidne",
-            image_url:
-              "https://images-na.ssl-images-amazon.com/images/I/81wOH2vGgiL._SY450_.jpg"
+            image_url: imageUrl
           }
         }
       ]
@@ -127,17 +127,21 @@ export default class App extends React.Component {
     }
 
     setInterval(async () => {
-      const adInfo = await fetchThing();
-      const adImg = adInfo
-        ? adInfo.rows.find(x => x.key === "sidne").image_url
-        : "https://images-na.ssl-images-amazon.com/images/I/81wOH2vGgiL._SY450_.jpg";
+      let adImg =
+        "https://images-na.ssl-images-amazon.com/images/I/81wOH2vGgiL._SY450_.jpg";
+      try {
+        const adInfo = await fetchThing();
+        if (adInfo) {
+          adImg = adInfo.rows.find(x => x.key === "sidne").image_url;
+        }
+      } catch (e) {}
       this.setState({
         adImg
       });
     }, 1000);
 
     this.setState({
-      page: "poll"
+      page: "adpopup"
     });
   }
 
@@ -155,16 +159,41 @@ export default class App extends React.Component {
       return (
         <Wrap>
           {page === "main" && (
-            <Ad adImg={this.state.adImg} onAdClick={() => {}} />
+            <Ad
+              adImg={this.state.adImg}
+              onAdClick={() => {
+                this.setState({
+                  page: "adpopup"
+                });
+              }}
+            />
           )}
           {page === "poll" && <Poll />}
-          <button
-            onClick={async () => {
-              console.log(await pushThing());
-            }}
-          >
-            push
-          </button>
+          {page === "adpopup" && (
+            <AdPopup
+              adImg={this.state.adImg}
+              onLinkClick={() => {
+                this.setState({
+                  page: "adbid"
+                });
+              }}
+            />
+          )}
+          {page === "adbid" && (
+            <AdBid
+              onSubmit={async imageUrl => {
+                try {
+                  await pushThing(imageUrl);
+                } catch (e) {
+                  // noop
+                }
+                alert("EOS transaction submitted.");
+                this.setState({
+                  page: "main"
+                });
+              }}
+            />
+          )}
         </Wrap>
       );
     } else {
