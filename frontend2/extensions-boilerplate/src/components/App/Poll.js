@@ -1,14 +1,37 @@
 import * as React from "react";
 import styled from "react-emotion";
+import { isBoolean } from "util";
+
+const question = {
+  title: "What champion did Scarra play in the last game?",
+  selections: [
+    {
+      name: "Ahri",
+      correct: true
+    },
+    {
+      name: "Blitzcrank"
+    },
+    {
+      name: "Thresh"
+    },
+    {
+      name: "Ziggs"
+    }
+  ]
+};
+
+const iSel = i => {
+  return String.fromCharCode("A".charCodeAt(0) + i);
+};
 
 const Poll = ({ className }) => (
   <div className={className}>
     <h2>What champion did Scarra play in the last game?</h2>
     <PollItems>
-      <PollItem selection="A">Ahri</PollItem>
-      <PollItem selection="B">Ziggs</PollItem>
-      <PollItem selection="C">Thresh</PollItem>
-      <PollItem selection="D">Blitzcrank</PollItem>
+      {question.selections.map((sel, i) => (
+        <PollItem selection={iSel(i)}>{sel.name}</PollItem>
+      ))}
     </PollItems>
   </div>
 );
@@ -40,6 +63,7 @@ const PollItem = styled(PollInner)`
 
 const Sel = styled.div`
   font-weight: bold;
+  margin-right: 5px;
 `;
 
 export default styled(Poll)`
