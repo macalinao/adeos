@@ -2,6 +2,7 @@ import React from "react";
 import Authentication from "../../util/Authentication/Authentication";
 import Ad from "./Ad";
 import Poll from "./Poll";
+import AdPopup from "./AdPopup";
 
 // eos
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from "eosjs";
@@ -127,11 +128,11 @@ export default class App extends React.Component {
 
     setInterval(async () => {
       const adInfo = await fetchThing();
-      if (!adInfo) {
-        return;
-      }
+      const adImg = adInfo
+        ? adInfo.rows.find(x => x.key === "sidne").image_url
+        : "https://images-na.ssl-images-amazon.com/images/I/81wOH2vGgiL._SY450_.jpg";
       this.setState({
-        adImg: adInfo.rows.find(x => x.key === "sidne").image_url
+        adImg
       });
     }, 1000);
 
