@@ -64,6 +64,14 @@ class Poll extends React.Component {
             </PollItem>
           ))}
         </PollItems>
+        {this.state.sel &&
+          question.selections.find(s => s.name === this.state.sel).correct && (
+            <p>Correct!</p>
+          )}
+        {this.state.sel &&
+          !question.selections.find(s => s.name === this.state.sel) && (
+            <p>Incorrect!</p>
+          )}
       </div>
     );
   }
