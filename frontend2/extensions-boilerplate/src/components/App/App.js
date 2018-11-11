@@ -3,24 +3,53 @@ import Authentication from "../../util/Authentication/Authentication";
 
 // eos
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from "eosjs";
-const defaultPrivateKey = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"; // adeosamigos1
+const defaultPrivateKey = "5JzD85DfmXrNEztbM2f9x4gwJUGkX7CkvLysEsjQa3HGfpdFS8T"; // adeosamigos1
 const signatureProvider = new JsSignatureProvider([defaultPrivateKey]);
-const rpc = new JsonRpc("http://127.0.0.1:8000");
+const rpc = new JsonRpc("http://127.0.0.1:7777");
 const api = new Api({
   rpc,
   signatureProvider
 });
 
+const pushThing = async () => {
+  const result = await api.transact(
+    {
+      actions: [
+        {
+          account: "adeos",
+          name: "setimage",
+          authorization: [
+            {
+              actor: "sidne",
+              permission: "active"
+            }
+          ],
+          data: {
+            space: "sidne",
+            image_url:
+              "https://images-na.ssl-images-amazon.com/images/I/81wOH2vGgiL._SY450_.jpg"
+          }
+        }
+      ]
+    },
+    {
+      blocksBehind: 3,
+      expireSeconds: 30
+    }
+  );
+  console.dir(result);
+};
+
 const fetchThing = async () => {
   rpc
     .get_table_rows({
       json: true,
-      code: "notechainacc", // contract who owns the table
-      scope: "notechainacc", // scope of the table
-      table: "notestruct", // name of the table as specified by the contract abi
+      code: "adeos", // contract who owns the table
+      scope: "adeos", // scope of the table
+      table: "space", // name of the table as specified by the contract abi
       limit: 100
     })
-    .then(result => this.setState({ noteTable: result.rows }));
+    .then(result => console.log(result));
 };
 
 import "./App.css";
@@ -124,6 +153,20 @@ export default class App extends React.Component {
               .
             </p>
           </div>
+          <button
+            onClick={async () => {
+              console.log(await pushThing());
+            }}
+          >
+            push
+          </button>
+          <button
+            onClick={async () => {
+              console.log(await fetchThing());
+            }}
+          >
+            pull
+          </button>
         </div>
       );
     } else {
