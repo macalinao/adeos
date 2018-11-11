@@ -56,6 +56,7 @@ class Poll extends React.Component {
                   : null
               }
               onClick={() => {
+                if (this.state.sel) return;
                 this.setState({ sel: sel.name });
               }}
             >
@@ -77,13 +78,18 @@ const PollItems = styled.div`
 
 const PollInner = ({ selection, className, children, answer, onClick }) => (
   <div className={className} onClick={onClick}>
-    <div>
+    <Left>
       <Sel>{selection})</Sel> {children}
-    </div>
+    </Left>
     {answer === "correct" && <MdDone />}
     {answer === "incorrect" && <MdClose />}
   </div>
 );
+
+const Left = styled.div`
+  flex-grow: 1;
+  display: flex;
+`;
 
 const PollItem = styled(PollInner)`
   padding: 10px;
@@ -100,6 +106,14 @@ const PollItem = styled(PollInner)`
     `}
     ${props => {
     switch (props.answer) {
+      case "incorrect":
+        return css`
+          background-color: #f08080;
+        `;
+      case "correct":
+        return css`
+          background-color: #90ee90;
+        `;
       case "faded":
         return css`
           background-color: #ccc;
