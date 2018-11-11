@@ -1,5 +1,7 @@
 import React from "react";
 import Authentication from "../../util/Authentication/Authentication";
+import Ad from "./Ad";
+import Poll from "./Poll";
 
 // eos
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from "eosjs";
@@ -10,6 +12,14 @@ const api = new Api({
   rpc,
   signatureProvider
 });
+import styled from "react-emotion";
+
+const Wrap = styled.div`
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  height: calc(100% - 200px);
+  padding: 20px;
+`;
 
 const pushThing = async () => {
   const result = await api.transact(
@@ -41,15 +51,13 @@ const pushThing = async () => {
 };
 
 const fetchThing = async () => {
-  rpc
-    .get_table_rows({
-      json: true,
-      code: "adeos", // contract who owns the table
-      scope: "adeos", // scope of the table
-      table: "space", // name of the table as specified by the contract abi
-      limit: 100
-    })
-    .then(result => console.log(result));
+  return rpc.get_table_rows({
+    json: true,
+    code: "adeos", // contract who owns the table
+    scope: "adeos", // scope of the table
+    table: "space", // name of the table as specified by the contract abi
+    limit: 100
+  });
 };
 
 import "./App.css";
@@ -64,7 +72,8 @@ export default class App extends React.Component {
     this.state = {
       finishedLoading: false,
       theme: "light",
-      isVisible: true
+      isVisible: true,
+      page: "main"
     };
   }
 
@@ -84,7 +93,7 @@ export default class App extends React.Component {
     });
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     if (this.twitch) {
       this.twitch.onAuthorized(auth => {
         this.Authentication.setToken(auth.token, auth.userId);
@@ -115,6 +124,20 @@ export default class App extends React.Component {
         this.contextUpdate(context, delta);
       });
     }
+
+    setInterval(async () => {
+      const adInfo = await fetchThing();
+      if (!adInfo) {
+        return;
+      }
+      this.setState({
+        adImg: adInfo.rows.find(x => x.key === "sidne").image_url
+      });
+    }, 1000);
+
+    this.setState({
+      page: "poll"
+    });
   }
 
   componentWillUnmount() {
@@ -126,33 +149,14 @@ export default class App extends React.Component {
   }
 
   render() {
+    const { page } = this.state;
     if (this.state.finishedLoading && this.state.isVisible) {
       return (
-        <div className="App">
-          <div
-            className={this.state.theme === "light" ? "App-light" : "App-dark"}
-          >
-            <p>Hello world!</p>
-            <p>My token is: {this.Authentication.state.token}</p>
-            <p>My opaque ID is {this.Authentication.getOpaqueId()}.</p>
-            <div>
-              {this.Authentication.isModerator() ? (
-                <p>
-                  I am currently a mod, and here's a special mod button{" "}
-                  <input value="mod button" type="button" />
-                </p>
-              ) : (
-                "I am currently not a mod."
-              )}
-            </div>
-            <p>
-              I have{" "}
-              {this.Authentication.hasSharedId()
-                ? `shared my ID, and my user_id is ${this.Authentication.getUserId()}`
-                : "not shared my ID"}
-              .
-            </p>
-          </div>
+        <Wrap>
+          {page === "main" && (
+            <Ad adImg={this.state.adImg} onAdClick={() => {}} />
+          )}
+          {page === "poll" && <Poll />}
           <button
             onClick={async () => {
               console.log(await pushThing());
@@ -160,14 +164,7 @@ export default class App extends React.Component {
           >
             push
           </button>
-          <button
-            onClick={async () => {
-              console.log(await fetchThing());
-            }}
-          >
-            pull
-          </button>
-        </div>
+        </Wrap>
       );
     } else {
       return <div className="App" />;
