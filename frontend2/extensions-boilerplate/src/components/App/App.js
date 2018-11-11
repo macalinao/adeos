@@ -21,6 +21,8 @@ const Wrap = styled.div`
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   height: calc(100% - 200px);
   padding: 20px;
+  background: url(/qt.png) no-repeat center center fixed;
+  background-size: 100%;
 `;
 
 const pushThing = async imageUrl => {
