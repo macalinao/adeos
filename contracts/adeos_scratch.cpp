@@ -1,56 +1,78 @@
 #include <eosiolib/eosio.hpp>
 
 using namespace eosio;
+using namespace std;
 
 class [[eosio::contract]] adeos : public eosio::contract {
-  using contract::contract;
-
   public:
+    using contract::contract;
 
-
-      void start_epoch();
-
-      void pay_dividends() {
-        // get total EOS balance of contract
-        symbol_type symbol(S(4,EOS));
-        const auto& ac = accountstable.get(symbol.name());
-
-        payout_index payouts(_self, _self);
-        auto size = std::count(payout_index.cbegin(), payout_index.cend());
-        uint64_t amtPerPerson = ac / size;
-      }
-
-      void deposit_funds() {
-        auto transfer_data = unpack_action_data<st_transfer>();
-        const auto from = transfer_data.from;
-
-        // add payee
-        payout_index payouts(_self, _self);
-        payouts.emplace(_self, [&](auto& payout) {
-          payout.payee = N(from);
-        });
-      }
-
-      void bid_space();
-
-      void claim_dividends();
-
-    struct Space {
-      uint64_t id;
-      // image associated with ad
-      string image_url;
-      // the streamer showing the ad
-      string streamer;
-      // currency balance of the ad
-      uint64_t balance;
-
-      uint64_t primary_key() const { return id; }
-    };
-
-    void pay_dividends() {
-      eosio::token
+    [[eosio::action]]
+    void setimage(name space, string image_url) {
+      space_index spaces(_code, _code.value);
+      spaces.emplace(space, [&]( auto& row ) {
+        row.key = space;
+        row.image_url = image_url;
+      });
     }
-       
+
+    [[eosio::action]]
+    void paydividends() {
+      // get total EOS balance of contract
+      accounts accountstable("eosio.token"_n, _code.value);
+      symbol coresymbol(symbol_code("EOS"), 4);
+      const auto& ac = accountstable.get(coresymbol.code());
+
+      // compute payout per person
+      payout_index payouts(_self, _self);
+
+      for (auto itr = payouts.begin(); itr != payouts.end(); itr++) {
+
+        auto size = std::count(payout_index.cbegin(), payout_index.cend());
+        auto amtPerPerson = ac.balance / size;
+   
+
+         action(
+        permission_level{ _code, N(active) },
+        N(eosio.token), N(transfer),
+        std::make_tuple(_code, itr->payee, amtPerPerson, std::string(""))
+     ).send();
+      }
+    }
+
+    [[eosio::action]]
+    void depositfunds() {
+      auto transfer_data = unpack_action_data<st_transfer>();
+      const auto from = transfer_data.from;
+
+      // add payee
+      payout_index payouts(_self, _self);
+      payouts.emplace(_self, [&](auto& payout) {
+        payout.payee = N(from);
+      });
+    }
+
+
   private: 
+      struct payout {
+        name payee;
+      }
+    typedef eosio::multi_index< N(payout), payout > payout_index;
+
+    struct account {
+      asset    balance;
+      uint64_t primary_key()const { return balance.symbol.code(); }
+    };
+    typedef eosio::multi_index<"accounts"_n, account> accounts;
+
+    struct [[eosio::table]] space {
+      name key;
+      string image_url;
+      uint64_t primary_key() const { return key.value; }
+    };
+    typedef eosio::multi_index<"space"_n, space> space_index;
+
   
 };
+
+EOSIO_DISPATCH( adeos, (setimage)(paydividends)(depositfunds))
