@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "react-emotion";
+import { css } from "emotion";
 import { isBoolean } from "util";
 
 const question = {
@@ -25,16 +26,45 @@ const iSel = i => {
   return String.fromCharCode("A".charCodeAt(0) + i);
 };
 
-const Poll = ({ className }) => (
-  <div className={className}>
-    <h2>What champion did Scarra play in the last game?</h2>
-    <PollItems>
-      {question.selections.map((sel, i) => (
-        <PollItem selection={iSel(i)}>{sel.name}</PollItem>
-      ))}
-    </PollItems>
-  </div>
-);
+class Poll extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      sel: null
+    };
+  }
+
+  render() {
+    const { className } = this.props;
+
+    return (
+      <div className={className}>
+        <h2>What champion did Scarra play in the last game?</h2>
+        <PollItems>
+          {question.selections.map((sel, i) => (
+            <PollItem
+              selection={iSel(i)}
+              answer={
+                this.state.sel
+                  ? this.state.sel === sel.name
+                    ? sel.correct
+                      ? "correct"
+                      : "incorrect"
+                    : "faded"
+                  : null
+              }
+              onClick={() => {
+                this.setState({ sel: sel.name });
+              }}
+            >
+              {sel.name}
+            </PollItem>
+          ))}
+        </PollItems>
+      </div>
+    );
+  }
+}
 
 const PollItems = styled.div`
   display: flex;
@@ -43,9 +73,11 @@ const PollItems = styled.div`
   width: 200px;
 `;
 
-const PollInner = ({ selection, className, children }) => (
+const PollInner = ({ selection, className, children, answer }) => (
   <div className={className}>
-    <Sel>{selection})</Sel> {children}
+    <div>
+      <Sel>{selection})</Sel> {children}
+    </div>
   </div>
 );
 
@@ -54,10 +86,14 @@ const PollItem = styled(PollInner)`
   display: flex;
   margin-bottom: 5px;
   border-radius: 3px;
-  &:hover {
-    cursor: pointer;
-    background-color: #b19dd8;
-  }
+  ${props =>
+    !props.answer &&
+    css`
+      &:hover {
+        cursor: pointer;
+        background-color: #b19dd8;
+      }
+    `}
   border: 1px solid #ccc;
 `;
 
