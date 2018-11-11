@@ -28,7 +28,7 @@ class AdBid extends React.Component {
             <label>Image URL</label>
             <input
               type="text"
-              value={this.state.imageUrl}
+              value={this.state.url}
               onChange={e => {
                 this.setState({
                   url: e.target.value
@@ -40,7 +40,7 @@ class AdBid extends React.Component {
             <label>Large image URL</label>
             <input type="text" />
           </Group>
-          <button onClick={() => onSubmit(this.state.imageUrl)}>Submit</button>
+          <button onClick={() => onSubmit(this.state.url)}>Submit</button>
         </Form>
       </div>
     );

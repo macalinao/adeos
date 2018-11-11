@@ -5,9 +5,11 @@ import Poll from "./Poll";
 import AdPopup from "./AdPopup";
 import AdBid from "./AdBid";
 
+const NAME = "zasydnez";
+
 // eos
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from "eosjs";
-const defaultPrivateKey = "5JzD85DfmXrNEztbM2f9x4gwJUGkX7CkvLysEsjQa3HGfpdFS8T"; // adeosamigos1
+const defaultPrivateKey = "5JreWDfqbWq8RFtCG6sP4xeQd6AMKSrs2VanhvvsJVimHinx6ks"; // adeosamigos1
 const signatureProvider = new JsSignatureProvider([defaultPrivateKey]);
 const rpc = new JsonRpc("http://127.0.0.1:7777");
 const api = new Api({
@@ -35,12 +37,12 @@ const pushThing = async imageUrl => {
           name: "setimage",
           authorization: [
             {
-              actor: "sidne",
+              actor: NAME,
               permission: "active"
             }
           ],
           data: {
-            space: "sidne",
+            space: NAME,
             image_url: imageUrl
           }
         }
@@ -134,7 +136,7 @@ export default class App extends React.Component {
       try {
         const adInfo = await fetchThing();
         if (adInfo) {
-          adImg = adInfo.rows.find(x => x.key === "sidne").image_url;
+          adImg = adInfo.rows.find(x => x.key === NAME).image_url;
         }
       } catch (e) {}
       this.setState({
@@ -197,6 +199,7 @@ export default class App extends React.Component {
                   await pushThing(imageUrl);
                 } catch (e) {
                   // noop
+                  console.log(e);
                 }
                 alert("EOS transaction submitted.");
                 this.setState({
