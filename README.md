@@ -20,3 +20,5 @@ http://faucet.cryptokylin.io/create_account?adeosamigos1
 "account": "adeosamigos1"
 }
 ```
+
+PW5JGAsbwLpvdXkKNNc8dcLAunxvsees35h912ffBsoE3PFxz8y2k
