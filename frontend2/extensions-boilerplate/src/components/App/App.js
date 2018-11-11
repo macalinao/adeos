@@ -19,10 +19,11 @@ import styled from "react-emotion";
 const Wrap = styled.div`
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  height: calc(100% - 200px);
+  height: 480px;
   padding: 20px;
   background: url(/qt.png) no-repeat center center fixed;
   background-size: 100%;
+  color: #fff;
 `;
 
 const pushThing = async imageUrl => {

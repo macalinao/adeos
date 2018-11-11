@@ -11,7 +11,8 @@ const Ad = ({ adImg, className, onAdClick }) => (
 );
 
 const Space = styled.div`
-  margin-top: 200px;
+  margin-top: 150px;
+  margin-bottom: 40px;
 `;
 
 const Imbadatcss = styled.div``;
