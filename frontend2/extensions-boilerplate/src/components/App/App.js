@@ -130,8 +130,7 @@ export default class App extends React.Component {
     }
 
     setInterval(async () => {
-      let adImg =
-        "https://images-na.ssl-images-amazon.com/images/I/81wOH2vGgiL._SY450_.jpg";
+      let adImg = "/ad.png";
       try {
         const adInfo = await fetchThing();
         if (adInfo) {
@@ -142,10 +141,6 @@ export default class App extends React.Component {
         adImg
       });
     }, 1000);
-
-    this.setState({
-      page: "adpopup"
-    });
   }
 
   componentWillUnmount() {
@@ -163,6 +158,11 @@ export default class App extends React.Component {
         <Wrap>
           {page === "main" && (
             <Ad
+              goToPoll={() => {
+                this.setState({
+                  page: "poll"
+                });
+              }}
               adImg={this.state.adImg}
               onAdClick={() => {
                 this.setState({
@@ -171,7 +171,15 @@ export default class App extends React.Component {
               }}
             />
           )}
-          {page === "poll" && <Poll />}
+          {page === "poll" && (
+            <Poll
+              goToHome={() => {
+                this.setState({
+                  page: "main"
+                });
+              }}
+            />
+          )}
           {page === "adpopup" && (
             <AdPopup
               adImg={this.state.adImg}

@@ -4,7 +4,7 @@ import styled from "react-emotion";
 const AdPopup = ({ adImg, className, onLinkClick }) => (
   <div className={className}>
     <Content>
-      <img src={adImg} />
+      <img src="/qtaddlarge.png" />
       <p>
         <a onClick={onLinkClick}>Advertise with us</a>
       </p>

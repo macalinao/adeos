@@ -1,9 +1,9 @@
 import * as React from "react";
 import styled from "react-emotion";
 
-const Ad = ({ adImg, className, onAdClick }) => (
+const Ad = ({ adImg, className, goToPoll, onAdClick }) => (
   <div className={className}>
-    <Imbadatcss />
+    <Imbadatcss onClick={goToPoll} />
     <Space>
       <img src={adImg} onClick={onAdClick} />
     </Space>
@@ -12,10 +12,14 @@ const Ad = ({ adImg, className, onAdClick }) => (
 
 const Space = styled.div`
   margin-top: 150px;
-  margin-bottom: 40px;
+  margin-bottom: 100px;
 `;
 
-const Imbadatcss = styled.div``;
+const Imbadatcss = styled.div`
+  height: 300px;
+  width: 40px;
+  cursor: pointer;
+`;
 
 export default styled(Ad)`
   height: 100%;
@@ -25,6 +29,6 @@ export default styled(Ad)`
   flex-direction: column;
   img {
     width: 200px;
-    height: 100px;
+    height: 50px;
   }
 `;

@@ -5,7 +5,7 @@ import { isBoolean } from "util";
 import { MdDone, MdClose } from "react-icons/md";
 
 const question = {
-  title: "What champion did Scarra play in the last game?",
+  title: "What champion did Imaqtpie play in the last game?",
   selections: [
     {
       name: "Ahri",
@@ -36,7 +36,7 @@ class Poll extends React.Component {
   }
 
   render() {
-    const { className } = this.props;
+    const { className, goToHome } = this.props;
 
     return (
       <div className={className}>
@@ -64,14 +64,14 @@ class Poll extends React.Component {
             </PollItem>
           ))}
         </PollItems>
-        {this.state.sel &&
-          question.selections.find(s => s.name === this.state.sel).correct && (
-            <p>Correct!</p>
-          )}
-        {this.state.sel &&
-          !question.selections.find(s => s.name === this.state.sel) && (
-            <p>Incorrect!</p>
-          )}
+        <div onClick={goToHome}>
+          {this.state.sel &&
+            question.selections.find(s => s.name === this.state.sel)
+              .correct && <p>Correct! You will receive 0.001 EOS.</p>}
+          {this.state.sel &&
+            !question.selections.find(s => s.name === this.state.sel)
+              .correct && <p>Incorrect! Better luck next time.</p>}
+        </div>
       </div>
     );
   }
@@ -104,6 +104,7 @@ const PollItem = styled(PollInner)`
   display: flex;
   margin-bottom: 5px;
   border-radius: 3px;
+  color: #000;
   ${props =>
     !props.answer &&
     css`
