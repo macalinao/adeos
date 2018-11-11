@@ -2,6 +2,7 @@ import * as React from "react";
 import styled from "react-emotion";
 import { css } from "emotion";
 import { isBoolean } from "util";
+import { MdDone, MdClose } from "react-icons/md";
 
 const question = {
   title: "What champion did Scarra play in the last game?",
@@ -43,6 +44,7 @@ class Poll extends React.Component {
         <PollItems>
           {question.selections.map((sel, i) => (
             <PollItem
+              key={sel.name}
               selection={iSel(i)}
               answer={
                 this.state.sel
@@ -73,11 +75,13 @@ const PollItems = styled.div`
   width: 200px;
 `;
 
-const PollInner = ({ selection, className, children, answer }) => (
-  <div className={className}>
+const PollInner = ({ selection, className, children, answer, onClick }) => (
+  <div className={className} onClick={onClick}>
     <div>
       <Sel>{selection})</Sel> {children}
     </div>
+    {answer === "correct" && <MdDone />}
+    {answer === "incorrect" && <MdClose />}
   </div>
 );
 
@@ -94,6 +98,18 @@ const PollItem = styled(PollInner)`
         background-color: #b19dd8;
       }
     `}
+    ${props => {
+    switch (props.answer) {
+      case "faded":
+        return css`
+          background-color: #ccc;
+        `;
+      default:
+        return css`
+          background-color: #fff;
+        `;
+    }
+  }}
   border: 1px solid #ccc;
 `;
 
