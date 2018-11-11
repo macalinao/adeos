@@ -1,0 +1,53 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Sat Nov 10 21:29:15 2018",
+    "version": "eosio::abi/1.0",
+    "structs": [
+        {
+            "name": "setimage",
+            "base": "",
+            "fields": [
+                {
+                    "name": "space",
+                    "type": "name"
+                },
+                {
+                    "name": "image_url",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "space",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "name"
+                },
+                {
+                    "name": "image_url",
+                    "type": "string"
+                }
+            ]
+        }
+    ],
+    "types": [],
+    "actions": [
+        {
+            "name": "setimage",
+            "type": "setimage",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "space",
+            "type": "space",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "abi_extensions": []
+}
